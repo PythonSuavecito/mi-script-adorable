@@ -1,38 +1,36 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, filters  # ¡'filters' en minúscula!
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from telegram import Bot
-import pandas as pd
-from datetime import datetime
 import os
 
-TOKEN = os.getenv("TOKEN")  # Usa variables de entorno
+TOKEN = os.getenv("TOKEN")
 if not TOKEN:
-    print("❌ ERROR: ¿Dónde está el TOKEN, Condeso? ¡Añádelo en Render!")
+    print("❌ ERROR: ¡Token no encontrado! Añádelo en Render.")
     exit(1)
 
-def start(update, context):
-    update.message.reply_text("🤖 **¡BOT SINDICAL EN MODO NUBE!**\nComandos:\n/lista - Ver PDF\n/cafe - Ubicación del café")
+async def start(update, context):
+    await update.message.reply_text("🤖 **¡BOT SINDICAL ACTIVADO!**\nComandos:\n/lista - Ver PDF\n/cafe - Ubicación del café")
 
-def lista(update, context):
+async def lista(update, context):
     try:
-        update.message.reply_document(
+        await update.message.reply_document(
             document=open("aniversarios_ultra_madrino.pdf", "rb"),
-            caption="📜 Lista actualizada (con poderes de la nube)"
+            caption="📜 Lista actualizada"
         )
     except FileNotFoundError:
-        update.message.reply_text("⚠️ ¡El PDF no existe aún! Usa /generarpdf")
+        await update.message.reply_text("⚠️ ¡El PDF no existe! Usa /generarpdf")
 
-def cafe(update, context):
-    update.message.reply_location(
-        latitude=19.4326,  # Coordenadas del sindicato
+async def cafe(update, context):
+    await update.message.reply_location(
+        latitude=19.4326,
         longitude=-99.1332
     )
-    update.message.reply_text("☕ **¡Cafetería 'El Cortocircuito'!**\n*Pide un 'café zombie' para revivir energías* 💀⚡")
+    await update.message.reply_text("☕ **¡Cafetería 'El Cortocircuito'!**")
 
 def main():
-    # Configura el bot con PTB v20+
-    application = Updater(TOKEN).application
+    # Configuración correcta para PTB v20+
+    application = Application.builder().token(TOKEN).build()
     
-    # Añade handlers
+    # Handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("lista", lista))
     application.add_handler(CommandHandler("cafe", cafe))
