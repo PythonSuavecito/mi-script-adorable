@@ -36,7 +36,7 @@ if __name__ == "__main__":
     # Configuración para Render (puerto obligatorio)
     import os
     PORT = int(os.environ.get("PORT", 10000))
-    aplicación.run_polling(
+    application.run_polling(
         drop_pending_updates=True,
         close_loop=False,
         port=PORT  # ¡Nuevo! Obligatorio para Render Web Services
