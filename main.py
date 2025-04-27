@@ -1,4 +1,4 @@
-cdfrom telegram.ext import Application, CommandHandler, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from telegram import Update
 import pandas as pd
 import os
@@ -40,13 +40,6 @@ async def revivir(update: Update, context):
         f"☠️ *{nombre} HA RESUCITADO* ¡Bienvenido al sindicato zombie!",
         parse_mode="Markdown"
     )
-# ---- MANEJA ERROR SIRANO666 ----
-from telegram.error import Conflict
-
-try:
-    application.run_polling()
-except Conflict as e:
-    print("🔴 Error: Ya hay otra instancia del bot corriendo. Mensaje completo:", e)
 # ---- CONFIGURACIÓN ----
 def main():
     application = Application.builder().token(TOKEN).build()
@@ -56,7 +49,11 @@ def main():
     application.add_handler(CommandHandler("revivir", revivir))
     
     logger.info("🤖 Bot activado. ¡A chambear!")
-    application.run_polling()
+    
+    try:
+        application.run_polling(drop_pending_updates=True)  # ¡Aquí va el try!
+    except Conflict as e:
+        logger.error(f"🔴 Error de conflicto: {e}")
 
 if __name__ == "__main__":
     main()
