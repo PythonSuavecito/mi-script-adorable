@@ -2,7 +2,7 @@ from telegram.ext import Application, CommandHandler
 from telegram.error import Conflict
 import os
 import logging
-import time  # Para el reinicio automático
+import time
 
 # Configura logging
 logging.basicConfig(
@@ -18,18 +18,17 @@ async def start(update, context):
 
 def run_bot():
     """Función que crea y ejecuta el bot"""
-    application = Application.builder().token(TOKEN).build()
-    application.add_handler(CommandHandler("start", start))
-    
     try:
-        # Configuración para Render (puerto obligatorio)
+        application = Application.builder().token(TOKEN).build()
+        application.add_handler(CommandHandler("start", start))
+        
+        # Configuración para Render
         PORT = int(os.environ.get('PORT', 10000))
         logger.info(f"🚀 Iniciando bot en puerto {PORT}...")
         
         application.run_polling(
             drop_pending_updates=True,
-            close_loop=False,
-            port=PORT  # ¡Clave para Render!
+            close_loop=False
         )
     except Conflict as e:
         logger.error(f"🔴 Error: {e}. Reiniciando en 5 segundos...")
@@ -37,4 +36,8 @@ def run_bot():
         run_bot()  # Reinicio automático
 
 if __name__ == "__main__":
-    run_bot()  # ¡Aquí se ejecuta todo!
+    # Fuerza el puerto si no está definido
+    if 'PORT' not in os.environ:
+        os.environ['PORT'] = '10000'
+    
+    run_bot()
