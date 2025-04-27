@@ -1,4 +1,4 @@
-from telegram.ext import Application, CommandHandler, MessageHandler, filters
+cdfrom telegram.ext import Application, CommandHandler, MessageHandler, filters
 from telegram import Update
 import pandas as pd
 import os
@@ -40,6 +40,7 @@ async def revivir(update: Update, context):
         f"☠️ *{nombre} HA RESUCITADO* ¡Bienvenido al sindicato zombie!",
         parse_mode="Markdown"
     )
+# ---- MANEJA ERROR SIRANO666 ----
 from telegram.error import Conflict
 
 try:
