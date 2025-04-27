@@ -2,6 +2,7 @@ from telegram.ext import Application, CommandHandler
 from telegram.error import Conflict
 import os
 import logging
+import time  # Para el reinicio automático
 
 # Configura logging
 logging.basicConfig(
@@ -13,31 +14,27 @@ logger = logging.getLogger(__name__)
 TOKEN = os.getenv("TOKEN")
 
 async def start(update, context):
-    await update.message.reply_text("🤖 ¡Bot activado con poderes anti-conflicto!")
+    await update.message.reply_text("⚡ ¡Bot sindical activado! ⚡")
 
-def main():
+def run_bot():
+    """Función que crea y ejecuta el bot"""
     application = Application.builder().token(TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     
     try:
-        # ¡Clave! drop_pending_updates y manejo de errores
+        # Configuración para Render (puerto obligatorio)
+        PORT = int(os.environ.get('PORT', 10000))
+        logger.info(f"🚀 Iniciando bot en puerto {PORT}...")
+        
         application.run_polling(
             drop_pending_updates=True,
             close_loop=False,
-            stop_signals=None
+            port=PORT  # ¡Clave para Render!
         )
     except Conflict as e:
-        logger.error(f"🚨 Error de conflicto: {e}")
-        logger.info("Reiniciando el bot en 5 segundos...")
+        logger.error(f"🔴 Error: {e}. Reiniciando en 5 segundos...")
         time.sleep(5)
-        main()  # Reinicio automático
+        run_bot()  # Reinicio automático
 
 if __name__ == "__main__":
-    # Configuración para Render (puerto obligatorio)
-    import os
-    PORT = int(os.environ.get("PORT", 10000))
-    application.run_polling(
-        drop_pending_updates=True,
-        close_loop=False,
-        port=PORT  # ¡Nuevo! Obligatorio para Render Web Services
-    )
+    run_bot()  # ¡Aquí se ejecuta todo!
