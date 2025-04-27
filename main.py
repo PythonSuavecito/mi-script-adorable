@@ -40,7 +40,12 @@ async def revivir(update: Update, context):
         f"☠️ *{nombre} HA RESUCITADO* ¡Bienvenido al sindicato zombie!",
         parse_mode="Markdown"
     )
+from telegram.error import Conflict
 
+try:
+    application.run_polling()
+except Conflict as e:
+    print("🔴 Error: Ya hay otra instancia del bot corriendo. Mensaje completo:", e)
 # ---- CONFIGURACIÓN ----
 def main():
     application = Application.builder().token(TOKEN).build()
